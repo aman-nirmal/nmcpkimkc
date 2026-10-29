@@ -513,35 +513,114 @@ document.addEventListener('DOMContentLoaded', () => {
     }, duration);
   }
 
-  // PDF Export
-  btnDownloadPdf.addEventListener('click', async () => {
-    const originalText = btnDownloadPdf.innerHTML;
-    btnDownloadPdf.disabled = true;
-    btnDownloadPdf.innerHTML = `
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
-      Generating High-Res PDF...
-    `;
+  /**
+   * Robust Certificate Canvas Generator
+   * Solves mobile blank-white PDF bug:
+   * 1. Clones #certificate into document.body with fixed (0,0) layout so it is NEVER affected
+   *    by mobile `.preview-pane` { display: none } or tab switching.
+   * 2. Sets explicit scrollX: 0, scrollY: 0, x: 0, y: 0 to eliminate mobile scroll offset bugs.
+   * 3. Sets safe scale (2.0x on mobile = 2364x1660 retina, 2.5x on desktop) to prevent mobile Safari GPU memory crashes.
+   * 4. Awaits font readiness and image loads before rasterization.
+   */
+  async function generateCertificateCanvas() {
+    const isPath = currentMode === 'path';
+    const targetWidth = 1182;
+    const targetHeight = isPath ? 830 : 816;
+
+    const certElement = document.getElementById('certificate');
+    if (!certElement) throw new Error('Certificate element not found');
+
+    // Create an isolated clone container attached to document.body
+    const clone = certElement.cloneNode(true);
+    clone.id = 'temp_cert_render_clone';
+    clone.style.position = 'fixed';
+    clone.style.top = '0px';
+    clone.style.left = '0px';
+    clone.style.width = `${targetWidth}px`;
+    clone.style.height = `${targetHeight}px`;
+    clone.style.margin = '0';
+    clone.style.padding = '0';
+    clone.style.zIndex = '999999';
+    clone.style.transform = 'none';
+    clone.style.visibility = 'visible';
+    clone.style.display = 'block';
+    clone.style.boxShadow = 'none';
+
+    // Transfer computed/inline background image to clone
+    const origBg = certElement.querySelector('.backgroundDiv');
+    const cloneBg = clone.querySelector('.backgroundDiv');
+    if (origBg && cloneBg) {
+      if (origBg.style.backgroundImage) {
+        cloneBg.style.backgroundImage = origBg.style.backgroundImage;
+      }
+      cloneBg.style.width = `${targetWidth}px`;
+      cloneBg.style.height = `${targetHeight}px`;
+    }
+
+    // Append to body so the browser layout engine calculates full layout & font metrics
+    document.body.appendChild(clone);
+
+    // Wait for fonts and any pending image rendering
+    if (document.fonts && document.fonts.ready) {
+      try {
+        await document.fonts.ready;
+      } catch (e) {
+        // ignore font timeout
+      }
+    }
+
+    const imgs = Array.from(clone.querySelectorAll('img'));
+    await Promise.all(imgs.map(img => {
+      if (img.complete) return Promise.resolve();
+      return new Promise(res => {
+        img.onload = res;
+        img.onerror = res;
+      });
+    }));
+
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // Choose scale: 2.0 on mobile devices (2364x1660 retina, prevents iOS Safari canvas memory limit)
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 992;
+    const renderScale = isMobile ? 2.0 : 2.5;
 
     try {
-      const isPath = currentMode === 'path';
-      const targetWidth = 1182;
-      const targetHeight = isPath ? 830 : 816;
-
-      const certElement = document.getElementById('certificate');
-      
-      const originalTransform = scaleContainer.style.transform;
-      scaleContainer.style.transform = 'none';
-
-      const canvas = await html2canvas(certElement, {
-        scale: 2.5, // 300 DPI crisp print
+      const canvas = await html2canvas(clone, {
+        scale: renderScale,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#f5f5f5',
         width: targetWidth,
-        height: targetHeight
+        height: targetHeight,
+        scrollX: 0,
+        scrollY: 0,
+        x: 0,
+        y: 0,
+        windowWidth: targetWidth,
+        windowHeight: targetHeight,
+        logging: false
       });
 
-      scaleContainer.style.transform = originalTransform;
+      return { canvas, targetWidth, targetHeight, isPath };
+    } finally {
+      if (clone && clone.parentNode) {
+        clone.parentNode.removeChild(clone);
+      }
+    }
+  }
+
+  // Handle PDF Export
+  async function triggerPdfDownload(buttonElement) {
+    const btn = buttonElement || btnDownloadPdf;
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = `
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="spin"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+      Generating PDF...
+    `;
+
+    try {
+      const { canvas, targetWidth, targetHeight, isPath } = await generateCertificateCanvas();
 
       const imgData = canvas.toDataURL('image/jpeg', 0.98);
 
@@ -568,36 +647,25 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Error generating PDF:', err);
       alert('Could not generate PDF: ' + err.message);
     } finally {
-      btnDownloadPdf.disabled = false;
-      btnDownloadPdf.innerHTML = originalText;
+      btn.disabled = false;
+      btn.innerHTML = originalText;
     }
-  });
+  }
 
-  // PNG Export
+  btnDownloadPdf.addEventListener('click', () => triggerPdfDownload(btnDownloadPdf));
+  const btnQuickDownloadPdf = document.getElementById('btnQuickDownloadPdf');
+  if (btnQuickDownloadPdf) {
+    btnQuickDownloadPdf.addEventListener('click', () => triggerPdfDownload(btnQuickDownloadPdf));
+  }
+
+  // Handle PNG Export
   btnDownloadPng.addEventListener('click', async () => {
     const originalText = btnDownloadPng.innerHTML;
     btnDownloadPng.disabled = true;
     btnDownloadPng.innerHTML = `Exporting PNG...`;
 
     try {
-      const isPath = currentMode === 'path';
-      const targetWidth = 1182;
-      const targetHeight = isPath ? 830 : 816;
-
-      const certElement = document.getElementById('certificate');
-      const originalTransform = scaleContainer.style.transform;
-      scaleContainer.style.transform = 'none';
-
-      const canvas = await html2canvas(certElement, {
-        scale: 2.5,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#f5f5f5',
-        width: targetWidth,
-        height: targetHeight
-      });
-
-      scaleContainer.style.transform = originalTransform;
+      const { canvas, isPath } = await generateCertificateCanvas();
 
       const safeName = (inputName.value.trim() || 'Certificate').replace(/[^a-zA-Z0-9_-]/g, '_');
       const subject = isPath
