@@ -117,7 +117,7 @@ const CERTIFICATES_DATA = [
 document.addEventListener('DOMContentLoaded', () => {
   // State
   let currentMode = 'course'; // 'course' | 'path'
-  let activeCertId = 5; // Default: Curve Fitting Onramp
+  let activeCertId = 1; // Default: 1. Programming in MATLAB
 
   // DOM Elements - Shell & Tabs
   const appLayout = document.getElementById('appLayout');
@@ -585,6 +585,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initialize
   renderPresetCards();
-  selectCertificate(5); // Start with Curve Fitting Onramp
+  selectCertificate(1); // Start with 1. Programming in MATLAB
   setTimeout(() => applyZoom('fit'), 100);
 });
