@@ -154,6 +154,18 @@ const CERTIFICATES_DATA = [
   }
 ];
 
+// Helper to generate a random completion date between 1 Oct 2026 and 29 Oct 2026
+function getRandomOctoberDate(year = 2026) {
+  const day = Math.floor(Math.random() * 29) + 1; // 1 to 29 inclusive
+  const padDay = String(day).padStart(2, '0');
+  return `${year}-10-${padDay}`;
+}
+
+// Dynamically assign each certificate preset a random completion date between 1 Oct and 29 Oct
+CERTIFICATES_DATA.forEach(cert => {
+  cert.defaultDate = getRandomOctoberDate();
+});
+
 document.addEventListener('DOMContentLoaded', () => {
   // State
   let currentMode = 'course'; // 'course' | 'path'
@@ -358,13 +370,13 @@ document.addEventListener('DOMContentLoaded', () => {
       inputPathTitle.value = cert.title;
       currentPathCourses = cert.courses || [];
       if (inputPathCourses) inputPathCourses.value = cert.courses.join('\n');
-      if (cert.defaultDate) inputDate.value = cert.defaultDate;
+      inputDate.value = cert.defaultDate || getRandomOctoberDate();
     } else {
       setMode('course');
       inputCourse.value = cert.title;
       inputDuration.value = cert.duration;
       inputPercent.value = '100%';
-      if (cert.defaultDate) inputDate.value = cert.defaultDate;
+      inputDate.value = cert.defaultDate || getRandomOctoberDate();
     }
 
     updateCertificate();
@@ -446,13 +458,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Today Date Button
+  // Random October Date Button (1 to 29 Oct)
   btnToday.addEventListener('click', () => {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    inputDate.value = `${yyyy}-${mm}-${dd}`;
+    inputDate.value = getRandomOctoberDate();
     updateCertificate();
   });
 
