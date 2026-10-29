@@ -1,0 +1,127 @@
+html body {
+    background: inherit;
+    font-family: 'Roboto', sans-serif;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+}
+
+.backgroundDiv {
+    border: 5px white solid;
+    overflow-x: hidden;
+    height: 830px;
+    background: whitesmoke;
+    /* Using important here so that the background is preserved for printing */
+    background: url('../images/watermark_base.jpg') !important;
+    background-size: 100% 100% !important;
+}
+
+.certificate {
+    position: relative;
+    width: 1182px;
+    margin: auto;
+}
+
+.certificate .headerImage {
+    margin-top: 65px;
+    color: whitesmoke;
+    width: 500px;
+    height: 80px;
+    margin-left: 20px;
+}
+
+.logo {
+    font-style: normal;
+    letter-spacing: -.03em;
+    padding-bottom: 4px;
+}
+
+.link {
+    font-size: .8em;
+    position: absolute;
+    bottom: 43px;
+    right: 0px;
+    color: lightgrey !important;
+    text-decoration: none !important;
+    margin-top: 10px;
+}
+
+.certificate .content {
+    margin-left: 90px;
+    text-align: left;
+}
+
+.certificate .name {
+    padding-top: 20px;
+    font-size: 2.2em;
+}
+
+.certificate .courseList {
+    margin-top: 30px;
+}
+
+ul{
+    margin-top: 10px;
+}
+
+ul > li{
+    list-style-type: disc;
+    padding-left: 5px;
+}
+
+.certificate .smallText {
+    font-size: 1em;
+}
+
+.certificate .mediumText {
+    padding-top: 15px;
+    font-size: 1.2em;
+}
+
+.certificate .largeText {
+    padding-top: 20px;
+    font-size: 1.8em;
+    max-width: 70%;
+}
+
+.certificate .bigText {
+    font-size: 2.5em;
+}
+
+.certificate .signature {
+    margin-top: 1%;
+    width: 200px;
+    height: 80px;
+}
+
+.certificate .designation {
+    font-size: 0.7em;
+}
+
+.certificate .dateText {
+    text-align: right;
+    margin-right: 40px;
+    margin-top: -30px;
+    font-size: 1.4em;
+}
+
+.certificate .percent {
+    font-weight: bold;
+    font-size: 1.5em;
+    margin: 0 5px;
+}
+
+li:not(:last-child) {
+    margin-bottom: 15px;
+}
+
+@media print {
+    @page {
+        margin: 0;
+        size: landscape;
+    }
+
+    a::after {
+        content: none !important;
+    }
+}

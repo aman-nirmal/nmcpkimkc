@@ -1,0 +1,20 @@
+{
+  "name": "mathworks-certificate-generator",
+  "version": "1.0.0",
+  "description": "Customizable MathWorks Course Completion Certificate Generator with High-Resolution PDF Download",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python3 -m http.server 8000",
+    "start": "npx -y serve -l 8000 ."
+  },
+  "keywords": [
+    "mathworks",
+    "matlab",
+    "certificate",
+    "pdf-generator",
+    "html2canvas",
+    "jspdf"
+  ],
+  "author": "Aman Nirmal",
+  "license": "MIT"
+}

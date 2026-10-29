@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>MathWorks Certificate Studio</title>
+  <meta name="description" content="Generate authentic MathWorks Course Completion Certificates and Learning Path Certificates with high-resolution PDF download.">
+
+  <!-- Modern Fonts: Plus Jakarta Sans for UI & Roboto for Certificates -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Core App Stylesheet -->
+  <link rel="stylesheet" href="./style.css">
+
+  <!-- PDF & Canvas Libraries -->
+  <script src="./lib/html2canvas.min.js"></script>
+  <script>
+    if (!window.html2canvas) {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\/script>');
+    }
+  </script>
+  <script src="./lib/jspdf.umd.min.js"></script>
+  <script>
+    if (!window.jspdf) {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"><\/script>');
+    }
+  </script>
+
+  <!-- Embedded base64 Assets (Guaranteed Zero-CORS offline) -->
+  <script src="./assets.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+          <polyline points="2 17 12 22 22 17"></polyline>
+          <polyline points="2 12 12 17 22 12"></polyline>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>MathWorks Certificate Studio</h1>
+        <span>Official Certificate & Learning Path Generator</span>
+      </div>
+    </div>
+    <div class="header-badges">
+      <span class="header-badge highlight">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        12 Preset Courses
+      </span>
+      <span class="header-badge">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        300 DPI Vector PDF
+      </span>
+    </div>
+  </header>
+
+  <!-- Mobile View Switcher Tabs (Shown on screens < 992px) -->
+  <div class="mobile-view-tabs">
+    <div class="mobile-tabs-bar">
+      <button type="button" class="mobile-tab-btn active" id="btnMobileEdit">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+        Editor Controls
+      </button>
+      <button type="button" class="mobile-tab-btn" id="btnMobilePreview">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        Live Preview
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Application Workspace -->
+  <main class="app-layout" id="appLayout">
+    
+    <!-- Left Sidebar: Controls & Inputs -->
+    <aside class="sidebar">
+      <div class="sidebar-content">
+
+        <!-- ================= CARD 1: 12 CERTIFICATES QUICK SELECT ================= -->
+        <div class="card-panel">
+          <div class="card-header">
+            <span class="card-title">
+              <span class="step-indicator">1</span>
+              Select Certificate
+            </span>
+            <span class="card-hint">12 Official Presets</span>
+          </div>
+
+          <!-- Quick Dropdown -->
+          <div class="select-container">
+            <select id="certPresetDropdown" class="custom-select">
+              <option value="" disabled>-- Choose a Certificate (1 to 12) --</option>
+              <option value="1">1. Programming in MATLAB (Learning Path • 3 courses)</option>
+              <option value="2">2. Debugging and Error Handling (Single Course • 1 hour)</option>
+              <option value="3">3. Solving Nonlinear Equations with MATLAB (Single Course • 3 hours)</option>
+              <option value="4">4. Introduction to Linear Algebra with MATLAB (Single Course • 3 hours)</option>
+              <option value="5">5. Curve Fitting Onramp (Single Course • 1 hour)</option>
+              <option value="6">6. Solve Systems of First-Order ODEs (Single Course • 1 hour)</option>
+              <option value="7">7. Calculations with Vectors and Matrices (Single Course • 1 hour)</option>
+              <option value="8">8. Simulink Onramp (Single Course • 2 hours)</option>
+              <option value="9">9. Core MATLAB Skills (Learning Path • 4 courses)</option>
+              <option value="10">10. Introduction to Solving Ordinary Differential Equations (Single Course • 1 hour)</option>
+              <option value="11">11. Simulink Fundamentals (Single Course • 8 hours)</option>
+              <option value="12">12. Organize Your Functions (Single Course • 1 hour)</option>
+            </select>
+          </div>
+
+          <!-- Quick Cards Scroll List -->
+          <div class="presets-grid" id="presetCardsContainer">
+            <!-- Injected by app.js -->
+          </div>
+        </div>
+
+        <!-- ================= CARD 2: CUSTOMIZE DETAILS ================= -->
+        <div class="card-panel">
+          <div class="card-header">
+            <span class="card-title">
+              <span class="step-indicator">2</span>
+              Customize Details
+            </span>
+            <span class="card-hint">Live Sync</span>
+          </div>
+
+          <!-- Format Toggle -->
+          <div class="format-switch-group">
+            <div class="format-switch-bar">
+              <button type="button" class="format-tab active" id="tabModeCourse">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+                Single Course
+              </button>
+              <button type="button" class="format-tab" id="tabModePath">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
+                Learning Path
+              </button>
+            </div>
+          </div>
+
+          <!-- Recipient Name -->
+          <div class="field-group">
+            <label for="inputName" class="field-label">
+              Recipient Full Name
+              <span class="sub">Printed on certificate</span>
+            </label>
+            <div class="input-box">
+              <span class="input-svg">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              </span>
+              <input type="text" id="inputName" class="input-text" placeholder="Your Name" value="" autocomplete="off" />
+            </div>
+          </div>
+
+          <!-- SINGLE COURSE FIELDS -->
+          <div id="sectionCourseFields">
+            
+            <div class="field-group">
+              <label for="inputCourse" class="field-label">
+                Course Title
+                <span class="sub">Official Name</span>
+              </label>
+              <div class="input-box">
+                <span class="input-svg">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                </span>
+                <input type="text" id="inputCourse" class="input-text" placeholder="e.g. Curve Fitting Onramp" value="Curve Fitting Onramp" autocomplete="off" />
+              </div>
+            </div>
+
+            <div class="field-group" style="margin-top: 10px;">
+              <label for="inputDuration" class="field-label">
+                Course Length
+                <span class="sub">Duration</span>
+              </label>
+              <div class="input-box">
+                <span class="input-svg">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                </span>
+                <input type="text" id="inputDuration" class="input-text" placeholder="e.g. 1 hour, 2 hours, 8 hours" value="1 hour" autocomplete="off" />
+              </div>
+              <div class="pills-row">
+                <button type="button" class="pill-btn duration-chip" data-duration="1 hour">1 hour</button>
+                <button type="button" class="pill-btn duration-chip" data-duration="1.5 hours">1.5 hours</button>
+                <button type="button" class="pill-btn duration-chip" data-duration="2 hours">2 hours</button>
+                <button type="button" class="pill-btn duration-chip" data-duration="3 hours">3 hours</button>
+                <button type="button" class="pill-btn duration-chip" data-duration="8 hours">8 hours</button>
+              </div>
+            </div>
+
+            <div class="field-group" style="margin-top: 10px;">
+              <label for="inputPercent" class="field-label">
+                Completion Percentage
+                <span class="sub">Default 100%</span>
+              </label>
+              <div class="input-box">
+                <span class="input-svg">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                </span>
+                <input type="text" id="inputPercent" class="input-text" value="100%" placeholder="100%" autocomplete="off" />
+              </div>
+            </div>
+
+          </div>
+
+          <!-- LEARNING PATH FIELDS -->
+          <div id="sectionPathFields" style="display: none;">
+            
+            <div class="field-group">
+              <label for="inputPathTitle" class="field-label">
+                Learning Path Title
+                <span class="sub">Curriculum Path</span>
+              </label>
+              <div class="input-box">
+                <span class="input-svg">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
+                </span>
+                <input type="text" id="inputPathTitle" class="input-text" placeholder="e.g. Programming in MATLAB" value="Programming in MATLAB" autocomplete="off" />
+              </div>
+            </div>
+
+            <div class="field-group" style="margin-top: 10px;">
+              <label for="inputPathCourses" class="field-label">
+                Included Courses (Curriculum)
+                <span class="sub">1 course per line</span>
+              </label>
+              <textarea id="inputPathCourses" class="input-area" rows="4">MATLAB Desktop Tools and Troubleshooting Scripts
+Programming Constructs
+The How and Why of Writing Functions</textarea>
+            </div>
+
+          </div>
+
+          <!-- Date Completed -->
+          <div class="field-group">
+            <label for="inputDate" class="field-label">
+              Date Completed
+              <span class="sub">Official Format</span>
+            </label>
+            <div class="input-box">
+              <span class="input-svg">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              </span>
+              <input type="date" id="inputDate" class="input-text" value="2026-10-26" />
+            </div>
+            <button type="button" id="btnToday" class="btn-action-text">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+              Set Today's Date
+            </button>
+          </div>
+
+        </div>
+
+        <!-- ================= CARD 3: DOWNLOAD & PRINT ================= -->
+        <div class="sidebar-actions-panel">
+          <button type="button" id="btnDownloadPdf" class="btn-primary-action">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Download Certificate PDF
+          </button>
+
+          <div class="secondary-grid">
+            <button type="button" id="btnDownloadPng" class="btn-secondary-action">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+              Save PNG
+            </button>
+            <button type="button" id="btnPrint" class="btn-secondary-action">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+              Print / Save
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- Right Live Preview Workspace -->
+    <section class="preview-pane">
+      <div class="preview-toolbar">
+        <div class="toolbar-status">
+          <span class="status-dot"></span>
+          Live Preview: <strong id="previewModeLabel" style="color: #0076a8; margin-left: 4px;">Single Course</strong>
+        </div>
+        <div class="zoom-controls">
+          <button type="button" id="btnZoomFit" class="btn-zoom" title="Fit to Screen">Fit</button>
+          <button type="button" id="btnZoom50" class="btn-zoom">50%</button>
+          <button type="button" id="btnZoom75" class="btn-zoom">75%</button>
+          <button type="button" id="btnZoom100" class="btn-zoom">100%</button>
+        </div>
+      </div>
+
+      <div class="preview-viewport" id="previewViewport">
+        <div class="scale-container" id="scaleContainer">
+          
+          <!-- Exact Certificate Container -->
+          <div class="certificate mode-course" id="certificate">
+            <div class="backgroundDiv">
+              
+              <!-- ===== FORMAT 1: Single Course Certificate ===== -->
+              <div id="certCourseContainer">
+                <div class="content">
+                  <img class="headerImage certHeaderImg" src="./headerlogo.jpg" alt="MathWorks" />
+                  <div class="largeText">Course Completion Certificate</div>
+                  <div class="name certRecipientName">Your Name</div>
+                  <div class="smallText">
+                    has successfully completed
+                    <span class="percent" id="certPercent">100% </span>of the self-paced training course
+                  </div>
+                  <div class="mediumText">
+                    <span class="courseLink" id="certCourse">Curve Fitting Onramp</span>
+                  </div>
+                  <div class="durationText" id="certDuration">Course Length: 1 hour</div>
+                  <div class="signature">
+                    <img class="certSignImg" src="./sign.jpg" alt="MathWorks Signature" width="100%" height="100%" />
+                  </div>
+                  <div class="dateText certDateText">26 October 2026</div>
+                </div>
+              </div>
+
+              <!-- ===== FORMAT 2: Learning Path Certificate ===== -->
+              <div id="certPathContainer" style="display: none;">
+                <img class="headerImage certHeaderImg" src="./headerlogo.jpg" alt="MathWorks" />
+                <div class="content">
+                  <div class="mediumText">This certificate is presented to</div>
+                  <div class="name certRecipientName">Your Name</div>
+                  <div class="mediumText">for successfully completing the learning path:</div>
+                  <div class="largeText">
+                    <span id="certPathTitle">Programming in MATLAB</span>
+                  </div>
+                  <div class="courseList">
+                    <div class="smallText">
+                      <span>Courses in this learning path:</span>
+                      <div class="courseList-columns">
+                        <ul class="firstList" id="certPathCol1">
+                          <li>MATLAB Desktop Tools and Troubleshooting Scripts &nbsp;&nbsp; </li>
+                          <li>Programming Constructs &nbsp;&nbsp; </li>
+                          <li>The How and Why of Writing Functions &nbsp;&nbsp; </li>
+                        </ul>
+                        <ul class="secondList" id="certPathCol2"></ul>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="signature">
+                    <img class="certSignImg" src="./sign.jpg" alt="MathWorks Signature" width="100%" height="100%" />
+                  </div>
+                  <div class="dateText certDateText">
+                    <span>8 August 2026</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <!-- End Certificate -->
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
