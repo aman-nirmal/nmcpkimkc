@@ -207,7 +207,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Action Buttons
   const btnDownloadPdf = document.getElementById('btnDownloadPdf');
   const btnDownloadPng = document.getElementById('btnDownloadPng');
-  const btnPrint = document.getElementById('btnPrint');
   const scaleContainer = document.getElementById('scaleContainer');
   const previewViewport = document.getElementById('previewViewport');
 
@@ -490,8 +489,8 @@ document.addEventListener('DOMContentLoaded', () => {
   btnZoom75.addEventListener('click', () => applyZoom(75));
   btnZoom100.addEventListener('click', () => applyZoom(100));
 
-  // Toast Notification (Zero Emojis, Clean SVG)
-  function showToast(message, duration = 3500) {
+  // Toast Notification (Responsive, truncated filename, zero emojis)
+  function showToast(title, subtitle = '', duration = 3500) {
     let container = document.querySelector('.toast-container');
     if (!container) {
       container = document.createElement('div');
@@ -501,8 +500,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const toast = document.createElement('div');
     toast.className = 'toast';
     toast.innerHTML = `
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      <div>${message}</div>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      <div class="toast-content">
+        <span class="toast-title">${title}</span>
+        ${subtitle ? `<span class="toast-filename" title="${subtitle}">${subtitle}</span>` : ''}
+      </div>
     `;
     container.appendChild(toast);
     setTimeout(() => {
@@ -642,7 +644,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const fileName = `${safeName}_${safeSubject}_${suffix}`;
 
       pdf.save(fileName);
-      showToast(`Downloaded: ${fileName}`);
+      showToast('Certificate PDF Downloaded', fileName);
     } catch (err) {
       console.error('Error generating PDF:', err);
       alert('Could not generate PDF: ' + err.message);
@@ -679,7 +681,7 @@ document.addEventListener('DOMContentLoaded', () => {
       link.download = fileName;
       link.href = canvas.toDataURL('image/png');
       link.click();
-      showToast(`Saved PNG: ${fileName}`);
+      showToast('Certificate PNG Saved', fileName);
     } catch (err) {
       console.error('Error exporting PNG:', err);
       alert('Could not export PNG: ' + err.message);
@@ -687,11 +689,6 @@ document.addEventListener('DOMContentLoaded', () => {
       btnDownloadPng.disabled = false;
       btnDownloadPng.innerHTML = originalText;
     }
-  });
-
-  // Native Print
-  btnPrint.addEventListener('click', () => {
-    window.print();
   });
 
   // Initialize
