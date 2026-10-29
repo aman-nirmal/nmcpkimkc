@@ -111,6 +111,46 @@ const CERTIFICATES_DATA = [
     badgeText: '1 hour',
     duration: '1 hour',
     defaultDate: '2026-10-26'
+  },
+  {
+    id: 13,
+    title: 'MATLAB Desktop Tools and Troubleshooting Scripts',
+    type: 'course',
+    badgeText: '1.5 hours',
+    duration: '1.5 hours',
+    defaultDate: '2026-10-26'
+  },
+  {
+    id: 14,
+    title: 'Programming Constructs',
+    type: 'course',
+    badgeText: '1.5 hours',
+    duration: '1.5 hours',
+    defaultDate: '2026-10-26'
+  },
+  {
+    id: 15,
+    title: 'The How and Why of Writing Functions',
+    type: 'course',
+    badgeText: '1 hour',
+    duration: '1 hour',
+    defaultDate: '2026-10-26'
+  },
+  {
+    id: 16,
+    title: 'Explore Data with MATLAB Plots',
+    type: 'course',
+    badgeText: '1.5 hours',
+    duration: '1.5 hours',
+    defaultDate: '2026-10-26'
+  },
+  {
+    id: 17,
+    title: 'Make and Manipulate Matrices',
+    type: 'course',
+    badgeText: '1.5 hours',
+    duration: '1.5 hours',
+    defaultDate: '2026-10-26'
   }
 ];
 

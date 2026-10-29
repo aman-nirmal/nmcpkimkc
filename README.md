@@ -4,20 +4,9 @@ An interactive web application to customize and generate authentic **MathWorks C
 
 ---
 
-## What's New in this Version
+## 17 Supported MathWorks Certificates
 
-1. **Better Typography**: Powered by **Plus Jakarta Sans** (Google Fonts) for the studio interface and authentic **Roboto** for certificates.
-2. **Zero Emojis**: Replaced completely with crisp, clean **Vector SVG icons** (download, printer, user, clock, calendar, search, document).
-3. **Mobile Friendly**:
-   - Touch-optimized controls with 44px minimum target sizes.
-   - Inputs formatted at 16px to prevent iOS Safari auto-zoom.
-   - Dedicated mobile navigation bar to toggle smoothly between **Editor Controls** and **Live Preview**.
-   - Auto-scaling certificate canvas that scales to 100% of any smartphone or tablet viewport width without overflow.
-4. **All 12 Official Presets**: Single Courses & Learning Paths with authentic course lengths and curricula.
-
----
-
-## 12 Supported MathWorks Certificates
+The studio includes 1-click auto-fill presets for all 17 certificates with their official types, titles, course lengths, and included curriculum:
 
 | # | Certificate Title | Format | Duration / Curriculum |
 |---|---|---|---|
@@ -33,6 +22,11 @@ An interactive web application to customize and generate authentic **MathWorks C
 | **10** | **Introduction to Solving Ordinary Differential Equations** | 🎓 Single Course | 1 hour |
 | **11** | **Simulink Fundamentals** | 🎓 Single Course | 8 hours |
 | **12** | **Organize Your Functions** | 🎓 Single Course | 1 hour |
+| **13** | **MATLAB Desktop Tools and Troubleshooting Scripts** | 🎓 Single Course | 1.5 hours |
+| **14** | **Programming Constructs** | 🎓 Single Course | 1.5 hours |
+| **15** | **The How and Why of Writing Functions** | 🎓 Single Course | 1 hour |
+| **16** | **Explore Data with MATLAB Plots** | 🎓 Single Course | 1.5 hours |
+| **17** | **Make and Manipulate Matrices** | 🎓 Single Course | 1.5 hours |
 
 ---
 
