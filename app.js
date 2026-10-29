@@ -158,6 +158,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // State
   let currentMode = 'course'; // 'course' | 'path'
   let activeCertId = 1; // Default: 1. Programming in MATLAB
+  let currentPathCourses = [
+    'MATLAB Desktop Tools and Troubleshooting Scripts',
+    'Programming Constructs',
+    'The How and Why of Writing Functions'
+  ];
 
   // DOM Elements - Shell & Tabs
   const appLayout = document.getElementById('appLayout');
@@ -352,7 +357,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cert.type === 'path') {
       setMode('path');
       inputPathTitle.value = cert.title;
-      inputPathCourses.value = cert.courses.join('\n');
+      currentPathCourses = cert.courses || [];
+      if (inputPathCourses) inputPathCourses.value = cert.courses.join('\n');
       if (cert.defaultDate) inputDate.value = cert.defaultDate;
     } else {
       setMode('course');
@@ -392,16 +398,13 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       certPathTitle.textContent = inputPathTitle.value.trim() || 'Programming in MATLAB';
 
-      const rawLines = inputPathCourses.value
-        .split('\n')
-        .map(l => l.trim())
-        .filter(l => l.length > 0);
-
-      const courses = rawLines.length > 0 ? rawLines : [
-        'MATLAB Desktop Tools and Troubleshooting Scripts',
-        'Programming Constructs',
-        'The How and Why of Writing Functions'
-      ];
+      const courses = (currentPathCourses && currentPathCourses.length > 0)
+        ? currentPathCourses
+        : [
+            'MATLAB Desktop Tools and Troubleshooting Scripts',
+            'Programming Constructs',
+            'The How and Why of Writing Functions'
+          ];
 
       certPathCol1.innerHTML = '';
       certPathCol2.innerHTML = '';
